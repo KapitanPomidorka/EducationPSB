@@ -1,4 +1,5 @@
-﻿using Learning.Models;
+﻿using Learning.data.Configurations;
+using Learning.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Learning.data
@@ -15,6 +16,17 @@ namespace Learning.data
         public DbSet<Materials> Materials { get; set; }
         public DbSet<Homework> Homeworks    { get; set; }
         public DbSet<Courses> Courses { get; set; }
-        public DbSet<Progress> Progresses { get; set; } 
+        public DbSet<Progress> Progresses { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new StudentConf());
+            modelBuilder.ApplyConfiguration(new CoursesConf());
+            modelBuilder.ApplyConfiguration(new GroupsConf());
+            modelBuilder.ApplyConfiguration(new ProgressConf());
+            modelBuilder.ApplyConfiguration(new HomeworkConf());
+            modelBuilder.ApplyConfiguration(new MaterialsConf());
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

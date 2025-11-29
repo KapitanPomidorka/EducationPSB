@@ -2,6 +2,7 @@
 {
     public class Progress
     {
+        public Guid Id { get; set; }
         public Guid HomeworkId { get; set; }
 
         public Homework Homework { get; set; } = null!;

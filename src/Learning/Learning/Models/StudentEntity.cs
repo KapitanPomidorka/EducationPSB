@@ -12,6 +12,8 @@
         public string Password { get; set; } = null!;
         public Role Role { get; set; }
 
+        public List<Progress> Progresses { get; set; } = null!;
+
     }
 
     public enum Role

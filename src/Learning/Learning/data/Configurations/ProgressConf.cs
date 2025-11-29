@@ -3,19 +3,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Learning.data.Configurations
 {
-    public class ProgressConf : IEntityTypeConfiguration<Progress>
+    public class ProgressConf : IEntityTypeConfiguration<Models.Progress>
     {
         public void Configure(EntityTypeBuilder<Models.Progress> builder)
         {
+            builder.HasKey(x => x.Id);
 
+            builder.Property(n => n.HomeworkId).IsRequired();
+            builder.Property(n => n.StudentId).IsRequired();
+            builder.Property(n => n.Grade);
+            builder.Property(n => n.Homework).IsRequired();
+            builder.Property(n => n.Student).IsRequired();
 
-            builder.Property(n => n.FIO).IsRequired();
-            builder.Property(n => n.Login).IsRequired();
-            builder.Property(n => n.Password).IsRequired();
-            builder.Property(n => n.Group).IsRequired();
-            builder.Property(n => n.Role).IsRequired();
-
-            builder.HasOne(g => g.Group).WithMany(s => s.Students);
+            builder.HasOne(g => g.Homework).WithMany(s => s.Progresses);
+            builder.HasOne(g => g.Student).WithMany(s => s.Progresses);
         }
+
     }
 }
