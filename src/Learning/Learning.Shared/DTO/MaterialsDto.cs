@@ -6,27 +6,50 @@ using System.ComponentModel.DataAnnotations;
 namespace Learning.Shared.DTO
 {
     public record MaterialsDto
-    {
-        public Guid Id { get; set; }
-        public string Title { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public MaterialType Type { get; set; }
-
-        public Guid CourseId { get; set; }
-        public CoursesDto Course { get; set; } = null!;
-    }
+  (
+         Guid Id,
+         [Required]
+         [StringLength(100)]
+         string Title,
+         string Description,
+         [Required]
+         MaterialType Type,
+         [Required]
+         Guid CourseId,
+         [Required]
+         CoursesDto Course
+    );
 
 
     public record CreateMaterialDto
-    {
-        public Guid Id { get; set; }
-        public string Title { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public MaterialType Type { get; set; }
+  (
+         Guid Id,
+         [Required]
+         [StringLength(100)]
+         string Title,
+         string Description,
+         [Required]
+         MaterialType Type,
+         [Required]
+         Guid CourseId,
+         [Required]
+         CoursesDto Course
+    );
 
-        public Guid CourseId { get; set; }
-        public CoursesDto Course { get; set; } = null!;
-    }
+    public record UpdateMaterialDto
+(
+     Guid Id,
+     [Required]
+         [StringLength(100)]
+         string Title,
+     string Description,
+     [Required]
+         MaterialType Type,
+     [Required]
+         Guid CourseId,
+     [Required]
+         CoursesDto Course
+);
 
 }
 

@@ -1,4 +1,6 @@
-﻿namespace Learning.Models
+﻿using Learning.Shared.General;
+
+namespace Learning.Models
 {
     public class StudentEntity
     {
@@ -13,6 +15,17 @@
         public Role Role { get; set; }
 
         public List<Progress> Progresses { get; set; } = null!;
+
+        public StudentEntity(string fio, Groups group, Guid groupId, string login, string password, List<Progress> progresses)
+        {
+            Id = new Guid();
+            FIO = fio;
+            Group = group;
+            GroupId = groupId;
+            Login = login;
+            Password = password;
+            Progresses = progresses;
+        }
 
     }
 

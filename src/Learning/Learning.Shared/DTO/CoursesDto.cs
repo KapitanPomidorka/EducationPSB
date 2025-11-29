@@ -3,51 +3,44 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Learning.Shared.DTO
 {
-    public record CoursesDto
-    {
-        public Guid Id { get; set; }
-        [Required]
-        public string Title { get; set; } = null!;
-        [Required]
-        public string Description { get; set; } = null!;
+    public record CoursesDto(
+        Guid Id,
+        [Required] string Title,
+        [Required] string Description 
 
-    }
+    );
 
-    public record CoursesDtoById
-    {
-        public Guid Id { get; set; }
-        [Required]
-        public string Title { get; set; } = null!;
-        [Required]
-        public string Description { get; set; } = null!;
-
-        public List<MaterialsDto> Materials { get; set; } = [];
-    }
+    public record CoursesDtoById(
+         Guid Id ,
+        [Required]string Title ,
+        [Required]string Description,
+        List<MaterialsDto> Materials
+    );
 
     public record CreateCourseDto
-    {
+    (
+        Guid Id,
         [Required]
         [StringLength(100)]
-        public string Title { get; set; } = null!;
+        string Title,
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; } = null!;
-
-        public List<MaterialsDto> Materials { get; set; } = [];
-    }
+        string Description,
+         List<MaterialsDto> Materials
+    );
 
     public record UpdateCourseDto
-    {
+      (
+        [Required]
+        Guid Id,
         [Required]
         [StringLength(100)]
-        public string Title { get; set; } = null!;
+        string Title,
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; } = null!;
-
-        public List<MaterialsDto> Materials { get; set; } = [];
-
-    }
+        string Description,
+         List<MaterialsDto> Materials
+    );
 }

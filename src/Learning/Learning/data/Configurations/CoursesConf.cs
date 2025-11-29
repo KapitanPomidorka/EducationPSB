@@ -10,7 +10,8 @@ namespace Learning.data.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(c => c.Course).IsRequired();
+            builder.Property(c => c.Title).IsRequired();
+            builder.Property(c => c.Description).IsRequired();
 
             builder.HasMany(s => s.Materials).WithOne(s => s.Course);
 

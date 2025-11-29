@@ -1,5 +1,6 @@
-﻿using Learning.data.IRep;
+﻿using Learning.Models;
 using Learning.Shared.DTO;
+using Learning.Shared.IRep;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
@@ -29,7 +30,7 @@ namespace Learning.Controllers
                     Group = g.Group,
                     Students = g.Students
                     .OrderBy(m => m.FIO)
-                    .Select(m => new StudentDto
+                    .Select(m => new StudentEntity()
                     {
                         Id = m.Id,
                         FIO = m.FIO,
@@ -46,7 +47,7 @@ namespace Learning.Controllers
                         Type = m.Type,
 
                         CourseId = m.CourseId
-                    })
+                    }}
                     .ToList();
 
 
@@ -156,8 +157,8 @@ namespace Learning.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Проверка на уникальность названия группы
-            if (await _groupRepository.ExistsAsync(createDto.Group))
+            Group Group = await _groupRepository.GetById(createDto.GroupId);
+            if ()
             {
                 ModelState.AddModelError(nameof(createDto.Group), "Группа с таким названием уже существует");
                 return BadRequest(ModelState);

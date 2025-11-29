@@ -8,5 +8,13 @@
         public List<StudentEntity> Students { get; set; } = [];
         public List<Homework> Homeworks { get; set; } = [];
 
+        public Groups(string group, List<StudentEntity> students, List<Homework> homeworks)
+        {
+            Id = new Guid();
+            Group = group;
+            Students = students;
+            Homeworks = homeworks;
+        }
+
     }
 }

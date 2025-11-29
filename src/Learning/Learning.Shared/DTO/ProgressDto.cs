@@ -6,15 +6,12 @@ using System.Text;
 namespace Learning.Shared.DTO
 {
     public record ProgressDto(
-        Guid Id,
-        Guid HomeworkId,
-        Guid StudentId,
-        float Grade,
-        string HomeworkTitle,
-        string StudentName,
-        string CourseName,
-        string HomeworkDescription,
-        DateTime HomeworkLimit
+       Guid Id ,
+     Guid HomeworkId ,
+     HomeworkDto Homework,
+    Guid StudentId ,
+    StudentDto Student ,
+    float Grade
     );
 
     public record CreateProgressDto(
@@ -27,21 +24,4 @@ namespace Learning.Shared.DTO
         [Range(0, 100, ErrorMessage = "Оценка должна быть от 0 до 100")] float Grade
     );
 
-    public record StudentProgressDto(
-        Guid ProgressId,
-        Guid HomeworkId,
-        string HomeworkTitle,
-        string HomeworkDescription,
-        DateTime HomeworkLimit,
-        string CourseName,
-        float Grade
-    );
-
-    public record HomeworkProgressDto(
-        Guid ProgressId,
-        Guid StudentId,
-        string StudentName,
-        string StudentLogin,
-        float Grade
-    );
 }

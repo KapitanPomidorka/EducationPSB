@@ -12,8 +12,6 @@ namespace Learning.Shared.DTO
         List<ProgressDto> Progresses
     );
 
-
-
     public record CreateStudentDto(
         [Required][StringLength(100)] string FIO,
         [Required] Guid GroupId,

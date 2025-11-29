@@ -14,5 +14,15 @@ namespace Learning.Models
 
             public Guid CourseId { get; set; }
             public Courses Course { get; set; } = null!;
+
+        public Materials(string title, string description, MaterialType type, Guid courseId, Courses course)
+        {
+            Id = new Guid();
+            Title = title;
+            Description = description;
+            Type = type;
+            CourseId = courseId;
+            Course = course;
         }
+    }
     }

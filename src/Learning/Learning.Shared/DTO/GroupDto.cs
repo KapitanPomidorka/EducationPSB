@@ -13,14 +13,14 @@ namespace Learning.Shared.DTO
     }
 
 
-    public class CreateGroupDto
+    public record CreateGroupDto
     {
         [Required]
         [StringLength(50, ErrorMessage = "Название группы не может превышать 50 символов")]
-        public string Group { get; set; } = null!;
+        public Guid GroupId { get; set; };
     }
 
-    public class UpdateGroupDto
+    public record UpdateGroupDto
     {
         [Required]
         [StringLength(50, ErrorMessage = "Название группы не может превышать 50 символов")]

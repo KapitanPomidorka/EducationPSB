@@ -1,5 +1,4 @@
-﻿
-using Learning.Models;
+﻿using Learning.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

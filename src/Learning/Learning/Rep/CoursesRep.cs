@@ -1,9 +1,11 @@
-﻿using Learning.Models;
+﻿using Learning.data;
+using Learning.Models;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Learning.data.IRep
+namespace Learning.Shared.Rep
 {
-    public class CoursesRep : ICoursesRep
+    public class CoursesRep 
     {
         private readonly LearningDBContext _context;
 
@@ -30,7 +32,7 @@ namespace Learning.data.IRep
 
         public async Task<Courses?> GetById(Guid Id)
         {
-            return await _context.Courses.Include(m=>m.Materials).FirstOrDefaultAsync(d => d.Id == Id);
+            return await _context.Courses.AsNoTracking().Include(m=>m.Materials).FirstOrDefaultAsync(d => d.Id == Id);
         }
 
         public async Task UpdateAsync(Courses entity)

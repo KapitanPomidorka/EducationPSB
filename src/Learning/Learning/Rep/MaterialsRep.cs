@@ -1,9 +1,10 @@
 ﻿using Learning.Models;
+using Learning.data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Learning.data.IRep
+namespace Learning.Shared.Rep
 {
-    public class MaterialsRep : IMaterialsRep
+    public class MaterialsRep
     {
         private readonly LearningDBContext _context;
 
