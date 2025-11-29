@@ -1,4 +1,5 @@
 ﻿using Learning.data.IRep;
+using Learning.Models;
 using Learning.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,19 +23,18 @@ namespace Learning.Controllers
         // GET: api/courses
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<CourseDto>>> GetCourses()
+        public async Task<ActionResult<List<CoursesDto>>> GetCourses()
         {
             try
             {
-                var courses = await _courseRepository.GetAll()
-                    .Select(c => new CourseDto
+                var courses = _courseRepository.GetAll()
+                    .Select(c => new CoursesDto
                     {
                         Id = c.Id,
                         Title = c.Title,
                         Description = c.Description,
-                        MaterialsCount = c.Materials.Count
-                    })
-                    .ToListAsync();
+                    }).ToList();
+
 
                 return Ok(courses);
             }
@@ -48,31 +48,30 @@ namespace Learning.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CourseDetailDto>> GetCourse(Guid id)
+        public async Task<ActionResult<CoursesDto>> GetCourse(Guid id)
         {
             try
             {
-                var course = await _courseRepository.GetByIdWithMaterials(id);
+                var course = await _courseRepository.GetById(id);
 
                 if (course == null)
                 {
-                    return NotFound($"Курс с ID {id} не найден");
+                    return NotFound("Курс не найден");
                 }
 
-                var courseDto = new CourseDetailDto
+                var courseDto = new CoursesDtoById
                 {
                     Id = course.Id,
                     Title = course.Title,
                     Description = course.Description,
                     Materials = course.Materials
-                        .OrderBy(m => m.Order)
-                        .Select(m => new MaterialDto
+                        .OrderBy(m => m.Title)
+                        .Select(m => new MaterialsDto
                         {
                             Id = m.Id,
                             Title = m.Title,
-                            Content = m.Content,
+                            Description = m.Description,
                             Type = m.Type,
-                            Order = m.Order,
                             CourseId = m.CourseId
                         })
                         .ToList()
@@ -82,7 +81,6 @@ namespace Learning.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при получении курса {CourseId}", id);
                 return StatusCode(500, "Произошла ошибка при получении данных");
             }
         }
@@ -91,7 +89,7 @@ namespace Learning.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CourseDto>> CreateCourse(CreateCourseDto createDto)
+        public async Task<ActionResult<CoursesDto>> CreateCourse(CreateCourseDto createDto)
         {
             try
             {
@@ -100,29 +98,20 @@ namespace Learning.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var course = new Course
+                var course = new Courses
                 {
                     Id = Guid.NewGuid(),
                     Title = createDto.Title,
                     Description = createDto.Description,
-                    Materials = new List<Material>()
+                    Materials = new List<Materials>()
                 };
 
                 await _courseRepository.CreateAsync(course);
+                return Ok(course);
 
-                var courseDto = new CourseDto
-                {
-                    Id = course.Id,
-                    Title = course.Title,
-                    Description = course.Description,
-                    MaterialsCount = 0
-                };
-
-                return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, courseDto);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при создании курса");
                 return StatusCode(500, "Произошла ошибка при создании курса");
             }
         }
@@ -132,7 +121,7 @@ namespace Learning.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CourseDto>> UpdateCourse(Guid id, UpdateCourseDto updateDto)
+        public async Task<ActionResult<CoursesDto>> UpdateCourse(Guid id, UpdateCourseDto updateDto)
         {
             try
             {
@@ -144,7 +133,7 @@ namespace Learning.Controllers
                 var existingCourse = await _courseRepository.GetById(id);
                 if (existingCourse == null)
                 {
-                    return NotFound($"Курс с ID {id} не найден");
+                    return NotFound("Курс не найден");
                 }
 
                 existingCourse.Title = updateDto.Title;
@@ -152,19 +141,20 @@ namespace Learning.Controllers
 
                 await _courseRepository.UpdateAsync(existingCourse);
 
-                var courseDto = new CourseDto
+                var courseDto = new CoursesDtoById
                 {
                     Id = existingCourse.Id,
                     Title = existingCourse.Title,
                     Description = existingCourse.Description,
-                    MaterialsCount = existingCourse.Materials.Count
+                    Materials = new List<MaterialsDto>()
+
                 };
 
                 return Ok(courseDto);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при обновлении курса {CourseId}", id);
+
                 return StatusCode(500, "Произошла ошибка при обновлении курса");
             }
         }
@@ -180,7 +170,7 @@ namespace Learning.Controllers
                 var course = await _courseRepository.GetById(id);
                 if (course == null)
                 {
-                    return NotFound($"Курс с ID {id} не найден");
+                    return NotFound("Курс не найден");
                 }
 
                 await _courseRepository.DeleteAsync(course);
@@ -189,62 +179,11 @@ namespace Learning.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при удалении курса {CourseId}", id);
+
                 return StatusCode(500, "Произошла ошибка при удалении курса");
             }
         }
 
-        // POST: api/courses/{courseId}/materials
-        [HttpPost("{courseId}/materials")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<MaterialDto>> AddMaterial(Guid courseId, CreateMaterialDto createDto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var course = await _courseRepository.GetById(courseId);
-                if (course == null)
-                {
-                    return NotFound($"Курс с ID {courseId} не найден");
-                }
-
-                var material = new Material
-                {
-                    Id = Guid.NewGuid(),
-                    Title = createDto.Title,
-                    Content = createDto.Content,
-                    Type = createDto.Type,
-                    Order = createDto.Order,
-                    CourseId = courseId
-                };
-
-                await _courseRepository.AddMaterialAsync(material);
-
-                var materialDto = new MaterialDto
-                {
-                    Id = material.Id,
-                    Title = material.Title,
-                    Content = material.Content,
-                    Type = material.Type,
-                    Order = material.Order,
-                    CourseId = material.CourseId
-                };
-
-                return CreatedAtAction(nameof(GetCourse), new { id = courseId }, materialDto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ошибка при добавлении материала к курсу {CourseId}", courseId);
-                return StatusCode(500, "Произошла ошибка при добавлении материала");
-            }
-        }
-    
-}
+       }
     }
 

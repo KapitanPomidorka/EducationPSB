@@ -1,5 +1,7 @@
 ﻿
 
+using Learning.Shared.General;
+
 namespace Learning.Models
 {
     public class Materials
@@ -12,14 +14,5 @@ namespace Learning.Models
 
             public Guid CourseId { get; set; }
             public Courses Course { get; set; } = null!;
-        }
-
-        public enum MaterialType
-        {
-            Text,
-            Pdf,
-            Video,
-            Link,
-            Scorm
         }
     }

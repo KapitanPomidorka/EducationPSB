@@ -3,7 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Learning.Shared.DTO
 {
-    public record CourseDto
+    public record CoursesDto
+    {
+        public Guid Id { get; set; }
+        [Required]
+        public string Title { get; set; } = null!;
+        [Required]
+        public string Description { get; set; } = null!;
+
+    }
+
+    public record CoursesDtoById
     {
         public Guid Id { get; set; }
         [Required]

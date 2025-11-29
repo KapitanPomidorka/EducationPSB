@@ -1,10 +1,11 @@
 ﻿
 
+using Learning.Shared.General;
 using System.ComponentModel.DataAnnotations;
 
 namespace Learning.Shared.DTO
 {
-    public record MaterialDto
+    public record MaterialsDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
@@ -15,14 +16,7 @@ namespace Learning.Shared.DTO
         public CoursesDto Course { get; set; } = null!;
     }
 
-    public enum MaterialType
-    {
-        Text,
-        Pdf,
-        Video,
-        Link,
-        Scorm
-    }
+
     public record CreateMaterialDto
     {
         public Guid Id { get; set; }
@@ -36,5 +30,5 @@ namespace Learning.Shared.DTO
 
 }
 
-}
+
 

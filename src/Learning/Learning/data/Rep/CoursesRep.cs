@@ -30,7 +30,7 @@ namespace Learning.data.IRep
 
         public async Task<Courses?> GetById(Guid Id)
         {
-            return await _context.Courses.FirstOrDefaultAsync(d => d.Id == Id);
+            return await _context.Courses.Include(m=>m.Materials).FirstOrDefaultAsync(d => d.Id == Id);
         }
 
         public async Task UpdateAsync(Courses entity)
