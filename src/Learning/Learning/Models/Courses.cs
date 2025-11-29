@@ -4,7 +4,8 @@
     {
         public Guid Id { get; set; }
 
-        public string Course { get; set; } = null!;
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
 
         public List<Materials> Materials { get; set; } = null!;
     }
