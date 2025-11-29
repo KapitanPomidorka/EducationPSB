@@ -34,4 +34,3 @@ app.MapRazorComponents<App>()
 
 app.Run();
 
-//hello
