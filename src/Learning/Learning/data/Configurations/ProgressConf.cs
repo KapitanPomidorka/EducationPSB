@@ -12,8 +12,6 @@ namespace Learning.data.Configurations
             builder.Property(n => n.HomeworkId).IsRequired();
             builder.Property(n => n.StudentId).IsRequired();
             builder.Property(n => n.Grade);
-            builder.Property(n => n.Homework).IsRequired();
-            builder.Property(n => n.Student).IsRequired();
 
             builder.HasOne(g => g.Homework).WithMany(s => s.Progresses);
             builder.HasOne(g => g.Student).WithMany(s => s.Progresses);

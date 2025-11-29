@@ -1,5 +1,4 @@
 <Solution>
   <Project Path="Learning.Client/Learning.Client.csproj" />
-  <Project Path="Learning.Shared/Learning.Shared.csproj" Id="66dfc534-ef07-4fea-991c-f5d83607ab42" />
   <Project Path="Learning/Learning.csproj" />
 </Solution>

@@ -28,5 +28,6 @@ namespace Learning.data
             modelBuilder.ApplyConfiguration(new MaterialsConf());
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }

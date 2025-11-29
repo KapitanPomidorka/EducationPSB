@@ -12,7 +12,7 @@ namespace Learning.Client.Models
         public string EntryPoint { get; set; } = "index.html";
         public long FileSize { get; set; }
         public Guid GroupId { get; set; }
-        public Groups Group { get; set; }
+       // public Groups Group { get; set; }
 
         public List<ScormAttempt> Attempts { get; set; } = new();
     }
@@ -21,7 +21,7 @@ namespace Learning.Client.Models
     {
         public int Id { get; set; }
         public int StudentId { get; set; }
-        public Students Student { get; set; }
+        //public Students Student { get; set; }
 
         public int ScormCourseId { get; set; }
         public ScormCourse ScormCourse { get; set; }

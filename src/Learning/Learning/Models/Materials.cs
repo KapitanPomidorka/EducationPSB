@@ -11,7 +11,7 @@ namespace Learning.Models
         public MaterialType Type { get; set; }
 
         public int? ScormCourseId { get; set; }
-        public ScormCourse ScormCourse { get; set; }
+        //public ScormCourse ScormCourse { get; set; }
 
         public string FilePath { get; set; } = null!;     
         public string VideoUrl { get; set; }   = string.Empty;

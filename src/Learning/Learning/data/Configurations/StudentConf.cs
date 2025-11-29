@@ -13,7 +13,6 @@ namespace Learning.data.Configurations
             builder.Property(n => n.FIO).IsRequired();
             builder.Property(n => n.Login).IsRequired();
             builder.Property(n => n.Password).IsRequired();
-            builder.Property(n => n.Group).IsRequired();
             builder.Property(n => n.Role).IsRequired();
 
 
