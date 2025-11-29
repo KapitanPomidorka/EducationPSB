@@ -33,3 +33,5 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(Learning.Client._Imports).Assembly);
 
 app.Run();
+
+//hello
