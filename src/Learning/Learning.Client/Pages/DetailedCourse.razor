@@ -1,0 +1,167 @@
+﻿@page "/course/{Id}"
+@using Learning.Shared.General
+@using Learning.Shared.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+
+@if (course == null)
+{
+    <div class="loading">
+        <p>Загрузка курса...</p>
+    </div>
+}
+else
+{
+    <div class="detailed-course">
+        <nav class="breadcrumb">
+            <a href="/">Главная</a> &gt;
+        </nav>
+        <h1 id="course-title" class="section-title">@course.Title</h1>
+            <p class="course-description">@course.Description</p>
+            <div class="course-meta">
+                <span class="material-count">
+                    <i class="fas fa-book"></i> Материалов: @course.Materials.Count
+                </span>
+            </div>
+        <div id="course-detail" class="tab-container">
+            <a href="/">
+                <i class="fas fa-arrow-left"></i> Назад к курсам
+            </a>
+            </div>
+
+
+        <!-- Материалы курса -->
+        <div class="materials-section">
+            <h2>
+                <i class="fas fa-list-ul"></i> Материалы курса
+                <span class="badge">@course.Materials.Count</span>
+            </h2>
+
+            @if (course.Materials.Any())
+            {
+                <div class="materials-list">
+                    @foreach (var material in course.Materials.OrderBy(m => m.Title))
+                    {
+                        <div class="material-item" @onclick="@(() => OpenMaterial(material))">
+                            <div class="material-icon">
+                                @switch (material.Type)
+                                {
+                                    case MaterialType.Video:
+                                        <i class="fas fa-video"></i>
+                                        break;
+                                    case MaterialType.Text:
+                                        <i class="fas fa-file-alt"></i>
+                                        break;
+                                    case MaterialType.Pdf:
+                                        <i class="fas fa-question-circle"></i>
+                                        break;
+                                    case MaterialType.Link:
+                                        <i class="fas fa-file-pdf"></i>
+                                        break;
+                                    default:
+                                        <i class="fas fa-link"></i>
+                                        break;
+                                }
+                            </div>
+                            <div class="material-content">
+                                <h4>@material.Title</h4>
+                                <p>@material.Description</p>
+                            </div>
+                            <div class="material-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="no-materials">
+                    <i class="fas fa-inbox"></i>
+                    <p>Материалы курса пока не добавлены</p>
+                </div>
+            }
+        </div>
+
+        <div class="action-buttons">
+            <button @onclick="GoBack" class=" back-button">
+                <i class="fas fa-arrow-left"></i> Назад к курсам
+            </button>
+            <button @onclick="StartCourse" class="btn btn-primary">
+                <i class="fas fa-play"></i> Посмотреть материалы
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = string.Empty;
+
+    private Courses? course;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadCourse();
+    }
+
+    private async Task LoadCourse()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            if (Guid.TryParse(Id, out Guid courseId))
+            {
+                course = await Http.GetFromJsonAsync<Courses>($"api/courses/{courseId}");
+
+                if (course == null)
+                {
+                    errorMessage = "Курс не найден";
+                }
+            }
+            else
+            {
+                errorMessage = "Неверный идентификатор курса";
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = $"Ошибка загрузки: {ex.Message}";
+            Console.WriteLine($"HTTP Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Произошла ошибка при загрузке курса";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void OpenMaterial(Materials material)
+    {
+        // Здесь можно открыть материал в модальном окне или перейти на страницу материала
+        Console.WriteLine($"Открыт материал: {material.Title}");
+    }
+
+    private void StartCourse()
+    {
+        if (course?.Materials?.Any() == true)
+        {
+            var firstMaterial = course.Materials.OrderBy(m => m.Title).First();
+            NavigationManager.NavigateTo($"/material/{firstMaterial.Id}");
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

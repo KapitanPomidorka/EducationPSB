@@ -1,8 +1,8 @@
-﻿using Learning.Models;
-using Learning.data;
+﻿using Learning.data;
 using Microsoft.EntityFrameworkCore;
+using Learning.Shared.Models;
 
-namespace Learning.Shared.Rep
+namespace Learning.Rep
 {
     public class HomeworkRep
     {

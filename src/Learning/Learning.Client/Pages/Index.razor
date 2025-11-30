@@ -1,0 +1,103 @@
+﻿@page "/"
+@using Learning.Shared.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<!-- Основной контент -->
+<div id="home" class="tab-container active">
+    <h1 class="section-title">
+        <i class="fas fa-home"></i> Добро пожаловать в Буря знаний!
+    </h1>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-value">156</div>
+            <div class="stat-label">Активных курсов</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">2,847</div>
+            <div class="stat-label">Студентов онлайн</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">89%</div>
+            <div class="stat-label">Успеваемость</div>
+        </div>
+    </div>
+
+    <h2 class="section-title">
+        <i class="fas fa-fire"></i> Популярные курсы
+    </h2>
+    <div class="cards-container" id="home-courses">
+        @if (courses == null)
+        {
+            <p><em>Загрузка курсов...</em></p>
+        }
+        else
+        {
+       
+                @foreach (var course in courses)
+        {
+            <a @onclick="@(() => ViewCourse(course.Id))">
+                    <div class="card">
+                    <div class="card-img">@course.Title</div>
+                <div class="card-content">
+                            <h3 class="card-title">@course.Title</h3>
+                        <p class="card-description">@course.Description</p>
+                    </div>
+                </div>
+                </a>
+                }
+        }
+    </div>
+
+
+    <h2 class="section-title">
+        <i class="fas fa-book"></i> Популярные книги
+    </h2>
+    <div class="cards-container" id="home-books">
+        <!-- Книги будут добавлены через JavaScript -->
+        <p>Список книг скоро появится...</p>
+    </div>
+
+    <h2 class="section-title">
+        <i class="fas fa-bullhorn"></i> Анонсы новых курсов
+    </h2>
+    <div class="cards-container" id="home-announcements">
+        <!-- Анонсы будут добавлены через JavaScript -->
+        <p>Новые курсы в разработке...</p>
+    </div>
+
+    <h2 class="section-title">
+        <i class="fas fa-newspaper"></i> Последние новости в сфере образования
+    </h2>
+    <div class="cards-container" id="home-news">
+        <!-- Новости будут добавлены через JavaScript -->
+        <p>Следите за обновлениями...</p>
+    </div>
+</div>
+
+@code {
+    private List<Courses>? courses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourses();
+    }
+
+    private async Task LoadCourses()
+    {
+        try
+        {
+            courses = await Http.GetFromJsonAsync<List<Courses>>("api/courses");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка загрузки курсов: {ex.Message}");
+        }
+    }
+
+    private void ViewCourse(Guid courseId)
+    {
+        NavigationManager.NavigateTo($"/course/{courseId}");
+    }
+}

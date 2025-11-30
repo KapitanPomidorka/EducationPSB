@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\" />
+    <ProjectReference Include="..\Learning.Shared\Learning.Shared.csproj" />
   </ItemGroup>
 
 </Project>

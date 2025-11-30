@@ -1,9 +1,8 @@
 ﻿using Learning.data;
-using Learning.Models;
-
+using Learning.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Learning.Shared.Rep
+namespace Learning.Rep
 {
     public class CoursesRep 
     {

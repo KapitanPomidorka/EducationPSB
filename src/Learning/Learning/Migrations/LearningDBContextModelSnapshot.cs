@@ -22,13 +22,17 @@ namespace Learning.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Learning.Models.Courses", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Courses", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Course")
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -37,7 +41,7 @@ namespace Learning.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("Learning.Models.Groups", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Groups", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,13 +56,13 @@ namespace Learning.Migrations
                     b.ToTable("Groups");
                 });
 
-            modelBuilder.Entity("Learning.Models.Homework", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Homework", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CoursesId")
+                    b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CurseId")
@@ -80,24 +84,18 @@ namespace Learning.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoursesId");
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("GroupId");
 
                     b.ToTable("Homeworks");
                 });
 
-            modelBuilder.Entity("Learning.Models.Materials", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Materials", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
@@ -106,23 +104,12 @@ namespace Learning.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ScormCourseId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
-
-                    b.Property<string>("VideoUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -131,7 +118,7 @@ namespace Learning.Migrations
                     b.ToTable("Materials");
                 });
 
-            modelBuilder.Entity("Learning.Models.Progress", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Progress", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +142,7 @@ namespace Learning.Migrations
                     b.ToTable("Progresses");
                 });
 
-            modelBuilder.Entity("Learning.Models.StudentEntity", b =>
+            modelBuilder.Entity("Learning.Shared.Models.StudentEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -186,28 +173,28 @@ namespace Learning.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("Learning.Models.Homework", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Homework", b =>
                 {
-                    b.HasOne("Learning.Models.Courses", "Courses")
+                    b.HasOne("Learning.Shared.Models.Courses", "Course")
                         .WithMany()
-                        .HasForeignKey("CoursesId")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Learning.Models.Groups", "Group")
+                    b.HasOne("Learning.Shared.Models.Groups", "Group")
                         .WithMany("Homeworks")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Courses");
+                    b.Navigation("Course");
 
                     b.Navigation("Group");
                 });
 
-            modelBuilder.Entity("Learning.Models.Materials", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Materials", b =>
                 {
-                    b.HasOne("Learning.Models.Courses", "Course")
+                    b.HasOne("Learning.Shared.Models.Courses", "Course")
                         .WithMany("Materials")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -216,15 +203,15 @@ namespace Learning.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("Learning.Models.Progress", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Progress", b =>
                 {
-                    b.HasOne("Learning.Models.Homework", "Homework")
+                    b.HasOne("Learning.Shared.Models.Homework", "Homework")
                         .WithMany("Progresses")
                         .HasForeignKey("HomeworkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Learning.Models.StudentEntity", "Student")
+                    b.HasOne("Learning.Shared.Models.StudentEntity", "Student")
                         .WithMany("Progresses")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -235,9 +222,9 @@ namespace Learning.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Learning.Models.StudentEntity", b =>
+            modelBuilder.Entity("Learning.Shared.Models.StudentEntity", b =>
                 {
-                    b.HasOne("Learning.Models.Groups", "Group")
+                    b.HasOne("Learning.Shared.Models.Groups", "Group")
                         .WithMany("Students")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -246,24 +233,24 @@ namespace Learning.Migrations
                     b.Navigation("Group");
                 });
 
-            modelBuilder.Entity("Learning.Models.Courses", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Courses", b =>
                 {
                     b.Navigation("Materials");
                 });
 
-            modelBuilder.Entity("Learning.Models.Groups", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Groups", b =>
                 {
                     b.Navigation("Homeworks");
 
                     b.Navigation("Students");
                 });
 
-            modelBuilder.Entity("Learning.Models.Homework", b =>
+            modelBuilder.Entity("Learning.Shared.Models.Homework", b =>
                 {
                     b.Navigation("Progresses");
                 });
 
-            modelBuilder.Entity("Learning.Models.StudentEntity", b =>
+            modelBuilder.Entity("Learning.Shared.Models.StudentEntity", b =>
                 {
                     b.Navigation("Progresses");
                 });

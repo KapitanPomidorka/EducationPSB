@@ -1,106 +1,109 @@
 ﻿using Learning.data;
-using Learning.Models;
-using Learning.Shared.DTO;
-using Learning.Shared.IRep;
-using Learning.Shared.Rep;
+using Learning.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Learning.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class CoursesController : ControllerBase
     {
-        private readonly CoursesRep _rep;
-        private readonly MaterialsRep _materialsRep;
+        private readonly LearningDBContext _context;
 
-        public CoursesController(CoursesRep rep, MaterialsRep materialsRep)
+        public CoursesController(LearningDBContext context)
         {
-            _rep = rep;
-            _materialsRep = materialsRep;
+            _context = context;
         }
 
-        // GET: api/courses
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CoursesDto>>> GetCourses()
+        public async Task<ActionResult<IEnumerable<Courses>>> GetCourses()
         {
-            var courses = _rep.GetAll();
-            return Ok(courses);
+            return await _context.Courses.AsNoTracking().ToListAsync();
         }
 
-        // GET: api/courses/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CoursesDtoById>> GetCourseById(Guid id)
-        {
-            var course = await _rep.GetById(id);
 
-            if (course == null)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Courses>> GetCourses(Guid id)
+        {
+            var courses = await _context.Courses.FindAsync(id);
+
+            if (courses == null)
             {
-                return NotFound($"Курс не найден");
+                return NotFound();
             }
 
-            return Ok(course);
+            return courses;
         }
 
-        // POST: api/courses
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCourses(Guid id, Courses courses)
+        {
+            if (id != courses.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(courses).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CoursesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
         [HttpPost]
         [Authorize(Roles = "Teacher,Admin")]
-        public async Task<ActionResult<CoursesDto>> CreateCourse(CreateCourseDto createCourseDto) ///исправить!!!!
+        public async Task<ActionResult<Courses>> PostCourses(Courses courses)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            _context.Courses.Add(courses);
+            await _context.SaveChangesAsync();
 
-            var createdCourse = new Courses(createCourseDto.Title, createCourseDto.Description, _materialsRep.GetAll()
-                .Where(c => c.CourseId == createCourseDto.Id).Select(m => new Materials
-                (
-                    m.Title, m.Description, m.Type, m.CourseId, m.Course
-
-                    )).ToList());
-
-            await _rep.CreateAsync(createdCourse);
-
-            return Ok(createdCourse);
+            return CreatedAtAction("GetCourses", new { id = courses.Id }, courses);
         }
 
-        // PUT: api/courses/{id}
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Teacher,Admin")]
-        public async Task<IActionResult> UpdateCourse(UpdateCourseDto updateCourseDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var course = await _rep.GetById(updateCourseDto.Id);
-            if (course == null)
-            {
-                return NotFound("Курс не найден");
-            }
-            await _rep.UpdateAsync(course);
-            return NoContent();
-        }
 
-        // DELETE: api/courses/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Teacher,Admin")]
-        public async Task<IActionResult> DeleteCourse(Guid id)
+        public async Task<IActionResult> DeleteCourses(Guid id)
         {
-            Courses? entity = await _rep.GetById(id);
-
-            if (entity == null)
+            var courses = await _context.Courses.FindAsync(id);
+            if (courses == null)
             {
-                return NotFound("Курс не найден");
+                return NotFound();
             }
-            await _rep.DeleteAsync(entity);
+
+            _context.Courses.Remove(courses);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
+        private bool CoursesExists(Guid id)
+        {
+            return _context.Courses.Any(e => e.Id == id);
+        }
     }
 }
-    
-

@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Learning.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Learning.data.Configurations
 {
-    public class ProgressConf : IEntityTypeConfiguration<Models.Progress>
+    public class ProgressConf : IEntityTypeConfiguration<Progress>
     {
-        public void Configure(EntityTypeBuilder<Models.Progress> builder)
+        public void Configure(EntityTypeBuilder<Progress> builder)
         {
             builder.HasKey(x => x.Id);
 

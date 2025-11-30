@@ -1,5 +1,5 @@
 ﻿using Learning.data.Configurations;
-using Learning.Models;
+using Learning.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Learning.data
